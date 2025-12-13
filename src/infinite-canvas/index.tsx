@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import type { InfiniteCanvasProps } from "./scene";
+import type { InfiniteCanvasProps } from "./types";
 
 const LazyInfiniteCanvasScene = React.lazy(() => import("./scene").then((mod) => ({ default: mod.InfiniteCanvasScene })));
 

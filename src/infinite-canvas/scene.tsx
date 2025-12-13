@@ -3,158 +3,19 @@ import * as React from "react";
 import * as THREE from "three";
 import { useIsTouchDevice } from "~/src/use-is-touch-device";
 
-export type MediaItem = {
-  url: string;
-  type: "image" | "video";
-};
-
-export type InfiniteCanvasProps = {
-  media: MediaItem[];
-};
-
-type ChunkData = {
-  key: string;
-  cx: number;
-  cy: number;
-  cz: number;
-  visibility: number;
-};
-
-type PlaneData = {
-  id: string;
-  position: THREE.Vector3;
-  scale: THREE.Vector3;
-  mediaIndex: number;
-};
-
-// Constants
-const CHUNK_SIZE = 110;
-const ITEMS_PER_CHUNK = 5;
-const RENDER_DISTANCE = 2;
-const CHUNK_FADE_MARGIN = 1;
-const MAX_VELOCITY = 3.2;
-const VISIBILITY_LERP = 0.18;
-const DEPTH_FADE_START = 140;
-const DEPTH_FADE_END = 260;
-const MAX_DIST = RENDER_DISTANCE + CHUNK_FADE_MARGIN;
-const CHUNK_OFFSETS: Array<{ dx: number; dy: number; dz: number; dist: number }> = [];
-
-for (let dx = -MAX_DIST; dx <= MAX_DIST; dx++) {
-  for (let dy = -MAX_DIST; dy <= MAX_DIST; dy++) {
-    for (let dz = -MAX_DIST; dz <= MAX_DIST; dz++) {
-      const dist = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
-      if (dist > MAX_DIST) continue;
-      CHUNK_OFFSETS.push({ dx, dy, dz, dist });
-    }
-  }
-}
-
-// Seeded random for deterministic generation
-const seededRandom = (seed: number): number => {
-  const x = Math.sin(seed * 9999) * 10000;
-  return x - Math.floor(x);
-};
-
-const hashString = (str: string): number => {
-  let h = 0;
-
-  for (let i = 0; i < str.length; i++) {
-    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
-  }
-
-  return Math.abs(h);
-};
-
-const clamp = (v: number, min: number, max: number): number => Math.max(min, Math.min(max, v));
-
-const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
-
-const getMediaDimensions = (media: HTMLImageElement | HTMLVideoElement | undefined) => {
-  const width =
-    media instanceof HTMLVideoElement
-      ? media.videoWidth
-      : media instanceof HTMLImageElement
-        ? media.naturalWidth || media.width
-        : undefined;
-
-  const height =
-    media instanceof HTMLVideoElement
-      ? media.videoHeight
-      : media instanceof HTMLImageElement
-        ? media.naturalHeight || media.height
-        : undefined;
-
-  return { width, height };
-};
-
-// Media texture cache
-const textureCache = new Map<string, THREE.Texture>();
-const videoElements = new Map<string, HTMLVideoElement>();
-
-const getTexture = (item: MediaItem): THREE.Texture | null => {
-  const cachedTexture = textureCache.get(item.url);
-
-  if (cachedTexture) {
-    return cachedTexture;
-  }
-
-  if (item.type === "video") {
-    let video = videoElements.get(item.url);
-
-    if (!video) {
-      video = document.createElement("video");
-      video.src = item.url;
-      video.crossOrigin = "anonymous";
-      video.loop = true;
-      video.muted = true;
-      video.playsInline = true;
-      video.autoplay = true;
-      video.play().catch(() => {});
-      videoElements.set(item.url, video);
-    }
-
-    const texture = new THREE.VideoTexture(video);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = false;
-    textureCache.set(item.url, texture);
-    return texture;
-  }
-
-  const texture = new THREE.TextureLoader().load(item.url);
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.generateMipmaps = true;
-  texture.anisotropy = 4;
-  textureCache.set(item.url, texture);
-  return texture;
-};
-
-// Generate planes for a chunk
-const generateChunkPlanes = (cx: number, cy: number, cz: number, mediaCount: number): PlaneData[] => {
-  const planes: PlaneData[] = [];
-  const seed = hashString(`${cx},${cy},${cz}`);
-
-  for (let i = 0; i < ITEMS_PER_CHUNK; i++) {
-    const s = seed + i * 1000;
-    const r = (n: number) => seededRandom(s + n);
-
-    const size = 12 + r(4) * 8;
-
-    planes.push({
-      id: `${cx}-${cy}-${cz}-${i}`,
-      position: new THREE.Vector3(
-        cx * CHUNK_SIZE + r(0) * CHUNK_SIZE,
-        cy * CHUNK_SIZE + r(1) * CHUNK_SIZE,
-        cz * CHUNK_SIZE + r(2) * CHUNK_SIZE
-      ),
-      scale: new THREE.Vector3(size, size, 1),
-      mediaIndex: Math.floor(r(5) * mediaCount),
-    });
-  }
-
-  return planes;
-};
+import {
+  CHUNK_FADE_MARGIN,
+  CHUNK_OFFSETS,
+  CHUNK_SIZE,
+  DEPTH_FADE_END,
+  DEPTH_FADE_START,
+  MAX_VELOCITY,
+  RENDER_DISTANCE,
+  VISIBILITY_LERP,
+} from "./constants";
+import { getTexture } from "./texture-manager";
+import type { ChunkData, InfiniteCanvasProps, MediaItem } from "./types";
+import { clamp, generateChunkPlanes, getMediaDimensions, lerp } from "./utils";
 
 // Single media plane component
 const MediaPlane = ({
@@ -245,7 +106,9 @@ const MediaPlane = ({
           markReady();
         };
 
-        mediaEl.addEventListener("loadedmetadata", handleMetadata, { once: true });
+        mediaEl.addEventListener("loadedmetadata", handleMetadata, {
+          once: true,
+        });
 
         return () => {
           mediaEl.removeEventListener("loadedmetadata", handleMetadata);
@@ -614,7 +477,15 @@ export function InfiniteCanvasScene({ media }: InfiniteCanvasProps) {
   }
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0, touchAction: "none" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        inset: 0,
+        touchAction: "none",
+      }}
+    >
       <Canvas
         camera={{ position: [0, 0, 50], fov: 60, near: 1, far: 500 }}
         dpr={window.devicePixelRatio}
