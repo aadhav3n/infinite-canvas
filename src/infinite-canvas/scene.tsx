@@ -16,7 +16,7 @@ import {
 } from "./constants";
 import { getTexture } from "./texture-manager";
 import type { ChunkData, InfiniteCanvasProps, MediaItem } from "./types";
-import { clamp, generateChunkPlanes, getMediaDimensions, lerp } from "./utils";
+import { clamp, generateChunkPlanes, getChunkUpdateThrottleMs, getMediaDimensions, lerp, shouldThrottleUpdate } from "./utils";
 
 // Single media plane component
 const MediaPlane = React.memo(
@@ -43,8 +43,16 @@ const MediaPlane = React.memo(
     const opacityRef = React.useRef(0);
 
     // Animate visibility/opacity locally to avoid re-renders
+    const frameSkipRef = React.useRef(0);
     useFrame(({ camera }) => {
-      if (!materialRef.current) return;
+      if (!materialRef.current || !meshRef.current) return;
+
+      // Skip calculations for fully invisible planes every other frame to reduce CPU load
+      // This is safe because opacity changes are already smooth via lerp
+      frameSkipRef.current = (frameSkipRef.current + 1) % 2;
+      if (opacityRef.current < 0.01 && !meshRef.current.visible && frameSkipRef.current === 0) {
+        return;
+      }
 
       const cameraCx = Math.floor(camera.position.x / CHUNK_SIZE);
       const cameraCy = Math.floor(camera.position.y / CHUNK_SIZE);
@@ -56,11 +64,16 @@ const MediaPlane = React.memo(
       const gridTarget =
         dist <= RENDER_DISTANCE ? 1 : Math.max(0, 1 - (dist - RENDER_DISTANCE) / Math.max(CHUNK_FADE_MARGIN, 0.0001));
 
-      // Depth fade
-      // We use the chunk center Z for consistency with previous logic,
-      // or we could use the plane's actual Z. Let's use chunk center for stability.
-      const chunkCenterZ = (chunkCz + 0.5) * CHUNK_SIZE;
-      const absDepth = Math.abs(chunkCenterZ - camera.position.z);
+      // Depth fade - use actual plane position for more accurate culling
+      const absDepth = Math.abs(position.z - camera.position.z);
+
+      // Early exit: if depth is way beyond fade end, skip expensive calculations
+      if (absDepth > DEPTH_FADE_END + 50) {
+        opacityRef.current = 0;
+        materialRef.current.opacity = 0;
+        meshRef.current.visible = false;
+        return;
+      }
 
       const depthLinear =
         absDepth <= DEPTH_FADE_START
@@ -70,6 +83,14 @@ const MediaPlane = React.memo(
 
       const targetVisibility = Math.min(gridTarget, depthTarget);
 
+      // Early exit if target is 0 and we're already very close to 0
+      if (targetVisibility < 0.01 && opacityRef.current < 0.01) {
+        opacityRef.current = 0;
+        materialRef.current.opacity = 0;
+        meshRef.current.visible = false;
+        return;
+      }
+
       // Smooth lerp
       opacityRef.current = lerp(opacityRef.current, targetVisibility, VISIBILITY_LERP);
 
@@ -77,9 +98,8 @@ const MediaPlane = React.memo(
       materialRef.current.opacity = opacityRef.current;
 
       // Optimization: hide mesh if fully invisible to save draw calls
-      if (meshRef.current) {
-        meshRef.current.visible = opacityRef.current > 0.001;
-      }
+      // Increased threshold for better performance
+      meshRef.current.visible = opacityRef.current > 0.01;
     });
 
     const displayScale = React.useMemo(() => {
@@ -190,7 +210,27 @@ const MediaPlane = React.memo(
 
 // Chunk component
 const Chunk = React.memo(({ cx, cy, cz, media }: { cx: number; cy: number; cz: number; media: MediaItem[] }) => {
-  const planes = React.useMemo(() => generateChunkPlanes(cx, cy, cz), [cx, cy, cz]);
+  // Generate planes lazily to avoid blocking render
+  const [planes, setPlanes] = React.useState<ReturnType<typeof generateChunkPlanes> | null>(null);
+
+  React.useEffect(() => {
+    // Defer plane generation to avoid blocking the render phase
+    // Use requestIdleCallback if available, otherwise setTimeout
+    const generatePlanes = () => {
+      setPlanes(generateChunkPlanes(cx, cy, cz));
+    };
+
+    if (typeof requestIdleCallback !== "undefined") {
+      const id = requestIdleCallback(generatePlanes, { timeout: 100 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(generatePlanes, 0);
+    return () => clearTimeout(id);
+  }, [cx, cy, cz]);
+
+  if (!planes) {
+    return null; // Don't render anything until planes are generated
+  }
 
   return (
     <group>
@@ -225,6 +265,8 @@ const SceneController = React.memo(
     const [chunks, setChunks] = React.useState<ChunkData[]>([]);
     const lastChunkKey = React.useRef("");
     const readySent = React.useRef(false);
+    const pendingChunkUpdate = React.useRef<{ cx: number; cy: number; cz: number } | null>(null);
+    const lastChunkUpdateTime = React.useRef(0);
 
     // Use drei's useProgress to track loading state
     const { active, progress } = useProgress();
@@ -458,21 +500,40 @@ const SceneController = React.memo(
       const key = `${cx},${cy},${cz}`;
 
       if (key !== lastChunkKey.current) {
+        // Store the pending update
+        pendingChunkUpdate.current = { cx, cy, cz };
         lastChunkKey.current = key;
+      }
 
-        // Removed startTransition to avoid frame drops/lag during rapid updates
-        setChunks(() => {
-          const nextChunks: ChunkData[] = [];
-          for (const offset of CHUNK_OFFSETS) {
-            const keyChunk = `${cx + offset.dx},${cy + offset.dy},${cz + offset.dz}`;
-            nextChunks.push({
-              key: keyChunk,
-              cx: cx + offset.dx,
-              cy: cy + offset.dy,
-              cz: cz + offset.dz,
+      // Throttle chunk updates: use time-based throttling to prevent lag during rapid zoom
+      // This prevents expensive React re-renders from blocking the animation
+      const zoomSpeed = Math.abs(velocity.current.z);
+      const throttleMs = getChunkUpdateThrottleMs(isZooming, zoomSpeed);
+
+      if (pendingChunkUpdate.current && shouldThrottleUpdate(lastChunkUpdateTime.current, throttleMs, now)) {
+        lastChunkUpdateTime.current = now;
+        const { cx: updateCx, cy: updateCy, cz: updateCz } = pendingChunkUpdate.current;
+        pendingChunkUpdate.current = null;
+
+        // Defer chunk update to next idle period to avoid blocking animation
+        // Use double deferral: startTransition + setTimeout to ensure it's truly non-blocking
+        React.startTransition(() => {
+          // Further defer with setTimeout to let the current frame complete
+          setTimeout(() => {
+            setChunks(() => {
+              const nextChunks: ChunkData[] = [];
+              for (const offset of CHUNK_OFFSETS) {
+                const keyChunk = `${updateCx + offset.dx},${updateCy + offset.dy},${updateCz + offset.dz}`;
+                nextChunks.push({
+                  key: keyChunk,
+                  cx: updateCx + offset.dx,
+                  cy: updateCy + offset.dy,
+                  cz: updateCz + offset.dz,
+                });
+              }
+              return nextChunks;
             });
-          }
-          return nextChunks;
+          }, 0);
         });
       }
     });

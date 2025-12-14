@@ -22,6 +22,35 @@ export const clamp = (v: number, min: number, max: number): number => Math.max(m
 
 export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 
+/**
+ * Checks if enough time has passed since the last update for throttling.
+ * @param lastUpdateTime - The last update time (from a ref)
+ * @param throttleMs - Minimum milliseconds between updates
+ * @param currentTime - Current time (usually performance.now())
+ * @returns true if the throttle allows an update, false otherwise
+ */
+export const shouldThrottleUpdate = (
+  lastUpdateTime: number,
+  throttleMs: number,
+  currentTime: number
+): boolean => {
+  return currentTime - lastUpdateTime >= throttleMs;
+};
+
+/**
+ * Calculates throttle duration based on zoom state.
+ * More aggressive throttling during rapid zoom to prevent lag.
+ * @param isZooming - Whether the camera is currently zooming
+ * @param zoomSpeed - Current zoom velocity magnitude
+ * @returns Throttle duration in milliseconds
+ */
+export const getChunkUpdateThrottleMs = (isZooming: boolean, zoomSpeed: number): number => {
+  const isVeryFastZoom = zoomSpeed > 1.0;
+  if (isVeryFastZoom) return 500;
+  if (isZooming) return 400;
+  return 100;
+};
+
 export const getMediaDimensions = (media: HTMLImageElement | HTMLVideoElement | undefined) => {
   const width =
     media instanceof HTMLVideoElement
