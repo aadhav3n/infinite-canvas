@@ -32,4 +32,5 @@
   width: 100%;
   transform-origin: left;
   background-color: var(--color-loader-bar-fill);
+  transition: transform 0.3s ease-out;
 }

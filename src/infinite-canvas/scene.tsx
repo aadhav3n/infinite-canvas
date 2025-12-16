@@ -305,11 +305,6 @@ function SceneController({
   const maxProgress = React.useRef(0);
 
   React.useEffect(() => {
-    gl.outputColorSpace = THREE.SRGBColorSpace;
-    gl.toneMapping = THREE.NoToneMapping;
-  }, [gl]);
-
-  React.useEffect(() => {
     const rounded = Math.round(progress);
     if (rounded > maxProgress.current) {
       maxProgress.current = rounded;
@@ -554,7 +549,12 @@ export function InfiniteCanvasScene({
         <Canvas
           camera={{ position: [0, 0, INITIAL_CAMERA_Z], fov: cameraFov, near: cameraNear, far: cameraFar }}
           dpr={dpr}
-          gl={{ antialias: false, powerPreference: "high-performance" }}
+          flat
+          gl={{
+            antialias: false,
+            powerPreference: "high-performance",
+            outputColorSpace: THREE.SRGBColorSpace,
+          }}
           className={styles.canvas}
         >
           <color attach="background" args={[backgroundColor]} />

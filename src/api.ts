@@ -16,67 +16,47 @@ type ArticArtwork = {
   thumbnail?: { width: number; height: number };
 };
 
-const GRID_IMAGE_WIDTH = 512;
-const MAX_ITEMS = 250;
+const SEARCH_QUERY = {
+  query: {
+    bool: {
+      must: [
+        { term: { is_public_domain: true } },
+        { term: { "classification_titles.keyword": "painting" } },
+        { exists: { field: "image_id" } },
+        { range: { date_end: { gte: 1600 } } },
+        { range: { date_start: { lte: 1725 } } },
+      ],
+      should: [
+        { match: { style_title: "Baroque" } },
+        { term: { "department_title.keyword": "Painting and Sculpture of Europe" } },
+      ],
+      minimum_should_match: 1,
+    },
+  },
+};
 
 export async function fetchArticArtworks(page = 1, limit = 25): Promise<MediaItem[]> {
-  try {
-    const fields = "id,title,artist_display,date_display,image_id,thumbnail";
+  const fields = "id,title,artist_display,date_display,image_id,thumbnail";
+  const params = encodeURIComponent(JSON.stringify(SEARCH_QUERY));
+  const url = `${API_BASE}/artworks/search?params=${params}&page=${page}&limit=${limit}&fields=${fields}`;
 
-    const query = {
-      query: {
-        bool: {
-          must: [
-            { term: { is_public_domain: true } },
-            { term: { "classification_titles.keyword": "painting" } },
-            { exists: { field: "image_id" } },
-            { range: { date_end: { gte: 1600 } } },
-            { range: { date_start: { lte: 1725 } } },
-          ],
-          should: [
-            { match: { style_title: "Baroque" } },
-            { term: { "department_title.keyword": "Painting and Sculpture of Europe" } },
-          ],
-          minimum_should_match: 1,
-        },
-      },
-    };
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`AIC API error: ${res.status}`);
 
-    const params = encodeURIComponent(JSON.stringify(query));
-    const url = `${API_BASE}/artworks/search?params=${params}&page=${page}&limit=${limit}&fields=${fields}`;
+  const data: ArticSearchResponse = await res.json();
+  if (!data.data?.length) return [];
 
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`AIC API error: ${res.status}`);
-    }
-
-    const data: ArticSearchResponse = await res.json();
-    if (!data.data?.length) return [];
-
-    const shuffled = data.data.sort(() => 0.5 - Math.random());
-
-    const artworks: MediaItem[] = [];
-
-    for (const item of shuffled) {
-      if (!item.image_id) continue;
-
-      artworks.push({
-        url: `${IIIF_BASE}/${item.image_id}/full/${GRID_IMAGE_WIDTH},/0/default.jpg`,
-        type: "image",
-        title: item.title,
-        artist: item.artist_display || "Unknown Artist",
-        year: item.date_display,
-        link: `https://www.artic.edu/artworks/${item.id}`,
-        width: item.thumbnail?.width,
-        height: item.thumbnail?.height,
-      });
-
-      if (artworks.length >= MAX_ITEMS) break;
-    }
-
-    return artworks;
-  } catch (err) {
-    console.error("Failed to fetch Baroque artworks:", err);
-    return [];
-  }
+  return data.data
+    .filter((item) => item.image_id)
+    .sort(() => Math.random() - 0.5)
+    .map((item) => ({
+      url: `${IIIF_BASE}/${item.image_id}/full/512,/0/default.jpg`,
+      type: "image" as const,
+      title: item.title,
+      artist: item.artist_display || "Unknown Artist",
+      year: item.date_display,
+      link: `https://www.artic.edu/artworks/${item.id}`,
+      width: item.thumbnail?.width,
+      height: item.thumbnail?.height,
+    }));
 }
