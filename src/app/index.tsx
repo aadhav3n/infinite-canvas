@@ -3,6 +3,7 @@ import manifest from "~/src/artworks/manifest.json";
 import { InfiniteCanvas } from "~/src/infinite-canvas";
 import type { MediaItem } from "~/src/infinite-canvas/types";
 import { PageLoader } from "~/src/loader";
+import { Frame } from "~/src/frame";
 
 export function App() {
   const [media] = React.useState<MediaItem[]>(manifest);
@@ -14,6 +15,7 @@ export function App() {
 
   return (
     <>
+      <Frame />
       <PageLoader progress={textureProgress} />
       <InfiniteCanvas media={media} onTextureProgress={setTextureProgress} />
     </>
