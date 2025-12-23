@@ -2,7 +2,7 @@
 
 _An infinite 3D canvas built with React Three Fiber for exploring and displaying media in a seamless, immersive space._
 
-![Image Title](https://generative-placeholders.glitch.me/image?width=800&height=600)
+![Image Title](https://tympanus.net/codrops/wp-content/uploads/2025/12/edoardo-lunardi-infinite-canvas-featured-image.jpg)
 
 [Article on Codrops](https://tympanus.net/codrops/?p=)
 
