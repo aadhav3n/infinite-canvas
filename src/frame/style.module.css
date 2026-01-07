@@ -1,17 +1,17 @@
 .frame {
-  padding: 3rem var(--page-padding, 1.5rem) 0;
+  padding: 1rem var(--page-padding, 1.5rem) 0;
   display: grid;
   z-index: 1000;
   position: relative;
-  grid-row-gap: 1rem;
-  grid-column-gap: 2rem;
+  grid-row-gap: 0.5rem;
+  grid-column-gap: 1rem;
   pointer-events: none;
   justify-items: start;
-  grid-template-columns: auto auto auto 1fr;
+  align-items: center;
+  grid-template-columns: auto auto auto auto 1fr;
   grid-template-areas:
-    'title title title title'
+    'title title credits ...'
     'back archive github ...'
-    'demos demos demos demos'
     'tags tags tags tags'
     'sponsor sponsor sponsor sponsor';
   color: #fff;
@@ -31,6 +31,7 @@
 .frame__title {
   grid-area: title;
   font-family: 'Asul', serif;
+  font-size: 1rem;
   font-weight: 400;
   margin: 0;
   color: #fff;
@@ -59,7 +60,7 @@
   grid-area: tags;
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .frame__tags a {
@@ -75,6 +76,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    grid-column-gap: 2rem;
     grid-template-columns: auto auto auto 1fr;
     grid-template-rows: auto auto auto;
     align-content: space-between;
@@ -91,10 +93,10 @@
 
   .frame__tags {
     align-self: end;
+    gap: 2rem;
   }
 
   .frame__credits {
-    justify-self: end;
     text-align: right;
   }
 }
