@@ -1,9 +1,25 @@
+import * as React from "react";
 import styles from "./style.module.css";
 
 export function Frame() {
+  const [contactText, setContactText] = React.useState("CONTACT");
+  const [isFading, setIsFading] = React.useState(false);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFading(true);
+      setTimeout(() => {
+        setContactText((prev) => (prev === "CONTACT" ? "SPONSOR" : "CONTACT"));
+        setIsFading(false);
+      }, 500);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <header className={`frame ${styles.frame}`}>
-      <div className={styles.frame__draggable}>THIS SITE IS DRAGGABLE</div>
+      <div className={styles.frame__draggable}>THIS SITE IS DRAGGABLE (use wasd)</div>
       <div className={styles.frame__titleContainer}>
         <h1 className={styles.frame__title}>MEGA MAALAI</h1>
         <p className={styles.frame__subtitle}>32 years in the making</p>
@@ -17,8 +33,13 @@ export function Frame() {
       <a className={styles.frame__tickets} href="https://tickets.megamaalai.org">
         TICKETS
       </a>
-      <a className={styles.frame__contact} href="https://www.instagram.com/megamaalai/" target="_blank" rel="noopener noreferrer">
-        CONTACT
+      <a 
+        className={`${styles.frame__contact} ${isFading ? styles.fading : ""}`} 
+        href="https://www.instagram.com/megamaalai/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        {contactText}
       </a>
       <div className={styles.frame__credits}>
         <span>By inhouse :)</span>

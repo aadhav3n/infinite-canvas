@@ -93,6 +93,11 @@
 
 .frame__contact {
   grid-area: contact;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.frame__contact.fading {
+  opacity: 0.3;
 }
 
 .frame__credits {
