@@ -1,5 +1,5 @@
 .frame {
-  padding: 1rem var(--page-padding, 1.5rem);
+  padding: 0;
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -7,7 +7,9 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: visible;
   pointer-events: none;
   color: #fff;
   mix-blend-mode: difference;
@@ -84,9 +86,10 @@
   gap: 1rem;
   width: 100%;
   position: absolute;
-  top: 1rem;
+  top: max(1rem, env(safe-area-inset-top, 1rem));
   left: 0;
   right: 0;
+  padding: 0 var(--page-padding, 1.5rem);
 }
 
 .frame__home {
@@ -112,7 +115,7 @@
 
 .frame__bottom {
   position: absolute;
-  bottom: 1rem;
+  bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
   left: 0;
   right: 0;
   display: flex;
@@ -120,6 +123,7 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
+  padding: 0 var(--page-padding, 1.5rem);
 }
 
 .frame__credits {
