@@ -9,12 +9,13 @@
   pointer-events: none;
   justify-items: start;
   align-items: center;
-  grid-template-columns: auto auto auto auto auto 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto;
   grid-template-areas:
-    "title title ... ... ... ..."
-    "... ... home timeline tickets contact ..."
-    "tags tags tags tags tags tags"
-    "sponsor sponsor sponsor sponsor sponsor credits";
+    "title"
+    "nav"
+    "tags"
+    "credits";
   color: #fff;
   mix-blend-mode: difference;
   font-family: "DM Sans", sans-serif;
@@ -40,6 +41,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  justify-self: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 .frame__title {
@@ -65,7 +70,7 @@
 .frame__timeline,
 .frame__tickets,
 .frame__contact {
-  justify-self: end;
+  justify-self: center;
   font-size: 0.75rem;
   text-decoration: none;
   transition: opacity 0.2s;
@@ -78,22 +83,31 @@
   opacity: 0.7;
 }
 
+.frame__nav {
+  grid-area: nav;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
 .frame__home {
-  grid-area: home;
+  grid-area: auto;
 }
 
 .frame__timeline {
-  grid-area: timeline;
+  grid-area: auto;
 }
 
 .frame__tickets {
-  grid-area: tickets;
+  grid-area: auto;
 }
 
 .frame__contact {
-  grid-area: contact;
+  grid-area: auto;
   transition: opacity 0.5s ease-in-out;
-  margin-left: -0.5rem;
 }
 
 .frame__contact.fading {
@@ -102,7 +116,9 @@
 
 .frame__credits {
   grid-area: credits;
-  justify-self: end;
+  justify-self: center;
+  text-align: center;
+  width: 100%;
 }
 
 .frame__tags {
@@ -110,6 +126,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  justify-content: center;
+  width: 100%;
 }
 
 .frame__tags a {
@@ -150,6 +168,11 @@
     font-size: clamp(0.875rem, 1.5vw, 1.25rem);
   }
 
+  .frame__nav {
+    grid-area: auto;
+    display: contents;
+  }
+
   .frame__tags {
     align-self: end;
     gap: 2rem;
@@ -161,11 +184,30 @@
     align-self: end;
   }
 
+  .frame__home {
+    grid-area: home;
+    justify-self: end;
+  }
+
+  .frame__timeline {
+    grid-area: timeline;
+    justify-self: end;
+  }
+
+  .frame__tickets {
+    grid-area: tickets;
+    justify-self: end;
+  }
+
+  .frame__contact {
+    grid-area: contact;
+    justify-self: end;
+  }
+
   .frame__home,
   .frame__timeline,
   .frame__tickets,
   .frame__contact {
-    justify-self: end;
     font-size: 0.875rem;
     white-space: nowrap;
   }
