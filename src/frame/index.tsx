@@ -7,8 +7,7 @@ export function Frame() {
         THIS SITE IS DRAGGABLE
       </div>
       <div className={styles.frame__titleContainer}>
-        <h1 className={styles.frame__title}>MEGA MAALAI</h1>
-        <p className={styles.frame__subtitle}>32 years in the making</p>
+        <h1 className={styles.frame__title}>home | megamaalai</h1>
       </div>
       <a className={styles.frame__home} href="https://home.megamaalai.org">
         HOME.MEGAMAALAI.ORG
