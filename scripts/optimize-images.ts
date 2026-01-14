@@ -4,8 +4,7 @@ import sharp from "sharp";
 
 const ARTWORKS_DIR = "./public/artworks";
 const MANIFEST_PATH = "./public/artworks/manifest.json";
-const MAX_WIDTH = 1920;
-const MAX_HEIGHT = 1080;
+const MAX_DIMENSION = 3000; // Max width or height
 const JPEG_QUALITY = 85; // Good balance between quality and file size
 
 type ManifestItem = {
@@ -35,32 +34,21 @@ async function optimizeImage(filepath: string): Promise<{ width: number; height:
     const { width, height } = metadata;
     
     // Calculate new dimensions while maintaining aspect ratio
+    // Scale down if either dimension exceeds MAX_DIMENSION
     let newWidth = width;
     let newHeight = height;
     
-    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+    if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
       const aspectRatio = width / height;
       
       if (width > height) {
-        // Landscape or square
-        newWidth = Math.min(width, MAX_WIDTH);
+        // Landscape or square - scale by width
+        newWidth = Math.min(width, MAX_DIMENSION);
         newHeight = Math.round(newWidth / aspectRatio);
-        
-        // If height still exceeds max, adjust
-        if (newHeight > MAX_HEIGHT) {
-          newHeight = MAX_HEIGHT;
-          newWidth = Math.round(newHeight * aspectRatio);
-        }
       } else {
-        // Portrait
-        newHeight = Math.min(height, MAX_HEIGHT);
+        // Portrait - scale by height
+        newHeight = Math.min(height, MAX_DIMENSION);
         newWidth = Math.round(newHeight * aspectRatio);
-        
-        // If width still exceeds max, adjust
-        if (newWidth > MAX_WIDTH) {
-          newWidth = MAX_WIDTH;
-          newHeight = Math.round(newWidth / aspectRatio);
-        }
       }
     }
 
@@ -132,7 +120,7 @@ async function main() {
   );
 
   console.log(`Found ${imageFiles.length} image files to optimize\n`);
-  console.log(`Target: Max ${MAX_WIDTH}x${MAX_HEIGHT} @ ${JPEG_QUALITY}% quality\n`);
+  console.log(`Target: Max dimension ${MAX_DIMENSION}px @ ${JPEG_QUALITY}% quality\n`);
 
   const manifest: ManifestItem[] = [];
   let totalOriginalSize = 0;
