@@ -16,7 +16,7 @@ export function PageLoader({ progress }: { progress: number }) {
   const [isCommentFading, setIsCommentFading] = React.useState(false);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    const timer = setTimeout(() => setMinTimeElapsed(true), 500);
     return () => clearTimeout(timer);
   }, []);
 

@@ -301,7 +301,10 @@ function SceneController({ media, onTextureProgress }: { media: MediaItem[]; onT
   const maxProgress = React.useRef(0);
 
   React.useEffect(() => {
-    const rounded = Math.round(progress);
+    // More optimistic progress: show faster loading for better UX
+    // Scale progress to feel faster while textures continue loading in background
+    const scaledProgress = Math.min(100, progress * 1.15);
+    const rounded = Math.round(scaledProgress);
 
     if (rounded > maxProgress.current) {
       maxProgress.current = rounded;

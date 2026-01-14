@@ -11,7 +11,6 @@
   align-items: center;
   grid-template-columns: auto auto auto auto auto 1fr;
   grid-template-areas:
-    "draggable draggable ... ... ... ..."
     "title title ... ... ... ..."
     "... ... home timeline tickets contact ..."
     "tags tags tags tags tags tags"
@@ -94,6 +93,7 @@
 .frame__contact {
   grid-area: contact;
   transition: opacity 0.5s ease-in-out;
+  margin-left: -0.5rem;
 }
 
 .frame__contact.fading {
@@ -130,7 +130,7 @@
     grid-template-rows: auto auto auto;
     align-content: space-between;
     grid-template-areas:
-      "draggable ... home timeline tickets contact"
+      "... ... home timeline tickets contact"
       "title title title title title title"
       "tags tags tags tags tags credits";
     column-gap: 1.5rem;
