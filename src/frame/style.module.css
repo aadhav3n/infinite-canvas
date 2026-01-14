@@ -10,10 +10,10 @@
   align-items: center;
   grid-template-columns: auto auto auto auto 1fr;
   grid-template-areas:
-    "title title credits ..."
-    "back archive github ..."
-    "tags tags tags tags"
-    "sponsor sponsor sponsor sponsor";
+    "title title ... ..."
+    "... ... back archive github"
+    "tags tags tags tags tags"
+    "sponsor sponsor sponsor sponsor credits";
   color: #fff;
   mix-blend-mode: difference;
   font-family: "DM Sans", sans-serif;
@@ -28,32 +28,50 @@
   mix-blend-mode: difference;
 }
 
-.frame__title {
+.frame__titleContainer {
   grid-area: title;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.frame__title {
   font-family: "Asul", serif;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 400;
   margin: 0;
   color: #fff;
   mix-blend-mode: difference;
 }
 
+.frame__subtitle {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  margin: 0;
+  color: #fff;
+  mix-blend-mode: difference;
+  text-transform: none;
+}
+
 .frame__back {
   grid-area: back;
-  justify-self: start;
+  justify-self: end;
 }
 
 .frame__archive {
   grid-area: archive;
-  justify-self: start;
+  justify-self: end;
 }
 
 .frame__github {
   grid-area: github;
+  justify-self: end;
 }
 
 .frame__credits {
   grid-area: credits;
+  justify-self: end;
 }
 
 .frame__tags {
@@ -77,18 +95,27 @@
     left: 0;
     width: 100%;
     grid-column-gap: 2rem;
-    grid-template-columns: auto auto auto 1fr;
+    grid-template-columns: 1fr auto auto auto;
     grid-template-rows: auto auto auto;
     align-content: space-between;
     grid-template-areas:
-      "back github archive ... credits"
-      "title title title title title"
-      "tags tags tags tags sponsor";
+      "... back github archive"
+      "title title title title"
+      "tags tags tags credits";
+  }
+
+  .frame__titleContainer {
+    justify-self: center;
+    align-items: center;
+    text-align: center;
   }
 
   .frame__title {
-    justify-self: center;
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: clamp(3rem, 7vw, 5rem);
+  }
+
+  .frame__subtitle {
+    font-size: clamp(0.875rem, 1.5vw, 1.25rem);
   }
 
   .frame__tags {
@@ -98,5 +125,13 @@
 
   .frame__credits {
     text-align: right;
+    justify-self: end;
+    align-self: end;
+  }
+
+  .frame__back,
+  .frame__archive,
+  .frame__github {
+    justify-self: end;
   }
 }

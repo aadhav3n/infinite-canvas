@@ -3,7 +3,10 @@ import styles from "./style.module.css";
 export function Frame() {
   return (
     <header className={`frame ${styles.frame}`}>
-      <h1 className={styles.frame__title}>Infinite Canvas</h1>
+      <div className={styles.frame__titleContainer}>
+        <h1 className={styles.frame__title}>MEGA MAALAI</h1>
+        <p className={styles.frame__subtitle}>32 years in the making</p>
+      </div>
       <a className={styles.frame__back} href="https://tympanus.net/codrops/?p=106679">
         Article
       </a>
@@ -18,11 +21,9 @@ export function Frame() {
         <a href="https://www.edoardolunardi.dev/">Edoardo Lunardi</a>
       </div>
       <nav className={styles.frame__tags}>
-        <a href="https://tympanus.net/codrops/demos/?tag=scroll">#scroll</a>
-        <a href="https://tympanus.net/codrops/demos/?tag=infinite">#inifinite</a>
-        <a href="https://tympanus.net/codrops/demos/?tag=draggable">#draggable</a>
-        <a href="https://tympanus.net/codrops/demos/?tag=three-js">#three.js</a>
-        <a href="https://tympanus.net/codrops/demos/?tag=webgl">#webgl</a>
+        <a href="#">#megamaalai</a>
+        <a href="#">#mm26</a>
+        <a href="#">#imperialtsoc</a>
       </nav>
     </header>
   );
