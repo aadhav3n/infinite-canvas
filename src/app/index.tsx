@@ -9,7 +9,7 @@ export function App() {
   const [textureProgress, setTextureProgress] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-
+ 
   React.useEffect(() => {
     let canceled = false;
 
@@ -37,6 +37,7 @@ export function App() {
       }
     };
 
+    
     loadManifest();
 
     return () => {
