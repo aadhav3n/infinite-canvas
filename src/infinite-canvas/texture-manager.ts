@@ -18,40 +18,67 @@ const getIsTouchDevice = (): boolean => {
 };
 
 const resizeImageForMobile = (image: HTMLImageElement, maxDimension: number): Promise<HTMLImageElement> => {
-  return new Promise((resolve) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    
-    if (!ctx) {
-      resolve(image);
-      return;
-    }
-
-    const { width, height } = image;
-    const aspectRatio = width / height;
-    
-    let newWidth = width;
-    let newHeight = height;
-    
-    if (width > maxDimension || height > maxDimension) {
-      if (width > height) {
-        newWidth = maxDimension;
-        newHeight = Math.round(maxDimension / aspectRatio);
-      } else {
-        newHeight = maxDimension;
-        newWidth = Math.round(maxDimension * aspectRatio);
+  return new Promise((resolve, reject) => {
+    try {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      
+      if (!ctx) {
+        resolve(image);
+        return;
       }
+
+      const { width, height } = image;
+      
+      // If image is already small enough, return as-is
+      if (width <= maxDimension && height <= maxDimension) {
+        resolve(image);
+        return;
+      }
+      
+      const aspectRatio = width / height;
+      
+      let newWidth = width;
+      let newHeight = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          newWidth = maxDimension;
+          newHeight = Math.round(maxDimension / aspectRatio);
+        } else {
+          newHeight = maxDimension;
+          newWidth = Math.round(maxDimension * aspectRatio);
+        }
+      }
+      
+      // Ensure dimensions are valid
+      if (newWidth <= 0 || newHeight <= 0 || !Number.isFinite(newWidth) || !Number.isFinite(newHeight)) {
+        resolve(image);
+        return;
+      }
+      
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      ctx.drawImage(image, 0, 0, newWidth, newHeight);
+      
+      const resizedImage = new Image();
+      resizedImage.onload = () => resolve(resizedImage);
+      resizedImage.onerror = () => {
+        // If canvas resize fails, return original image
+        resolve(image);
+      };
+      
+      try {
+        resizedImage.src = canvas.toDataURL("image/jpeg", 0.9);
+      } catch (err) {
+        // If toDataURL fails, return original image
+        resolve(image);
+      }
+    } catch (err) {
+      // If anything fails, return original image
+      resolve(image);
     }
-    
-    canvas.width = newWidth;
-    canvas.height = newHeight;
-    
-    ctx.drawImage(image, 0, 0, newWidth, newHeight);
-    
-    const resizedImage = new Image();
-    resizedImage.onload = () => resolve(resizedImage);
-    resizedImage.onerror = () => resolve(image);
-    resizedImage.src = canvas.toDataURL("image/jpeg", 0.9);
   });
 };
 
@@ -78,7 +105,13 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
   const maxDimension = isMobile ? 1080 : Infinity;
 
   // If mobile and image dimensions exceed max, we need to resize
-  const needsResize = isMobile && item.width && item.height && (item.width > maxDimension || item.height > maxDimension);
+  // Only attempt resize if we have valid dimensions and they exceed the limit
+  const needsResize = isMobile && 
+    typeof item.width === 'number' && 
+    typeof item.height === 'number' && 
+    item.width > 0 && 
+    item.height > 0 &&
+    (item.width > maxDimension || item.height > maxDimension);
 
   if (needsResize) {
     // Load image first, then resize for mobile
@@ -86,7 +119,16 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
     textureCache.set(key, texture);
     
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    // Don't set crossOrigin for same-origin images - it can cause CORS issues
+    // Only set it if the URL is from a different origin
+    try {
+      const urlObj = new URL(key, window.location.href);
+      if (urlObj.origin !== window.location.origin) {
+        img.crossOrigin = "anonymous";
+      }
+    } catch {
+      // If URL parsing fails, assume same origin
+    }
     
     img.onload = async () => {
       try {
@@ -137,7 +179,8 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
       }
     };
 
-    img.onerror = () => {
+    img.onerror = (error) => {
+      console.error("Image load failed, falling back to regular loader:", key, error);
       // Fallback to regular loader if image load fails
       loader.load(
         key,
@@ -164,7 +207,9 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
       );
     };
 
-    img.src = key;
+    // Handle relative URLs properly
+    const imageUrl = key.startsWith('/') || key.startsWith('http') ? key : `/${key}`;
+    img.src = imageUrl;
     
     return texture;
   } else {
