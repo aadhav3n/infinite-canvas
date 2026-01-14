@@ -68,7 +68,7 @@
 .comment {
   font-size: 16px;
   line-height: 1.5;
-  color: var(--color-loader-text, rgb(101, 82, 60));
+  color: var(--color-loader-text, rgba(255, 255, 255, 0.8));
   margin: 0;
   transition: opacity 0.3s ease-in-out;
   opacity: 1;

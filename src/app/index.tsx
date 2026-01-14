@@ -3,7 +3,6 @@ import { Frame } from "~/src/frame";
 import { InfiniteCanvas } from "~/src/infinite-canvas";
 import type { MediaItem } from "~/src/infinite-canvas/types";
 import { PageLoader } from "~/src/loader";
-import { MobileMessage } from "~/src/mobile-message";
 
 export function App() {
   const [media, setMedia] = React.useState<MediaItem[]>([]);
@@ -64,7 +63,6 @@ export function App() {
 
   return (
     <>
-      <MobileMessage />
       <Frame />
       <PageLoader progress={textureProgress} />
       <InfiniteCanvas media={media} onTextureProgress={setTextureProgress} />

@@ -51,12 +51,6 @@
   mix-blend-mode: difference;
 }
 
-.frame__mm {
-  color: #0066cc;
-  mix-blend-mode: normal;
-  display: inline-block;
-}
-
 .frame__subtitle {
   font-family: "DM Sans", sans-serif;
   font-size: 0.75rem;
