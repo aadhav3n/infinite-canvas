@@ -3,6 +3,9 @@ import styles from "./style.module.css";
 export function Frame() {
   return (
     <header className={`frame ${styles.frame}`}>
+      <div className={styles.frame__draggable}>
+        THIS SITE IS DRAGGABLE
+      </div>
       <div className={styles.frame__titleContainer}>
         <h1 className={styles.frame__title}>MEGA MAALAI</h1>
         <p className={styles.frame__subtitle}>32 years in the making</p>

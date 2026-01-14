@@ -10,7 +10,7 @@
   align-items: center;
   grid-template-columns: auto auto auto auto auto 1fr;
   grid-template-areas:
-    "title title ... ... ... ..."
+    "draggable title ... ... ... ..."
     "... ... home timeline teams tickets contact"
     "tags tags tags tags tags tags"
     "sponsor sponsor sponsor sponsor sponsor credits";
@@ -26,6 +26,12 @@
   pointer-events: auto;
   color: #fff;
   mix-blend-mode: difference;
+}
+
+.frame__draggable {
+  grid-area: draggable;
+  font-size: 0.75rem;
+  justify-self: start;
 }
 
 .frame__titleContainer {
@@ -111,13 +117,13 @@
     left: 0;
     width: 100%;
     grid-column-gap: 1.5rem;
-    grid-template-columns: 1fr auto auto auto auto auto;
+    grid-template-columns: auto 1fr auto auto auto auto auto;
     grid-template-rows: auto auto auto;
     align-content: space-between;
     grid-template-areas:
-      "... home timeline teams tickets contact"
-      "title title title title title title"
-      "tags tags tags tags tags credits";
+      "draggable ... home timeline teams tickets contact"
+      "title title title title title title title"
+      "tags tags tags tags tags tags credits";
   }
 
   .frame__titleContainer {
@@ -143,6 +149,12 @@
     text-align: right;
     justify-self: end;
     align-self: end;
+  }
+
+  .frame__draggable {
+    font-size: 0.875rem;
+    justify-self: start;
+    align-self: start;
   }
 
   .frame__home,
