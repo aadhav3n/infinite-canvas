@@ -8,12 +8,12 @@
   pointer-events: none;
   justify-items: start;
   align-items: center;
-  grid-template-columns: auto auto auto auto 1fr;
+  grid-template-columns: auto auto auto auto auto 1fr;
   grid-template-areas:
-    "title title ... ..."
-    "... ... back archive github"
-    "tags tags tags tags tags"
-    "sponsor sponsor sponsor sponsor credits";
+    "title title ... ... ... ..."
+    "... ... home timeline teams tickets contact"
+    "tags tags tags tags tags tags"
+    "sponsor sponsor sponsor sponsor sponsor credits";
   color: #fff;
   mix-blend-mode: difference;
   font-family: "DM Sans", sans-serif;
@@ -54,19 +54,35 @@
   text-transform: none;
 }
 
-.frame__back {
-  grid-area: back;
+.frame__home {
+  grid-area: home;
   justify-self: end;
+  font-size: 0.75rem;
 }
 
-.frame__archive {
-  grid-area: archive;
+.frame__timeline {
+  grid-area: timeline;
   justify-self: end;
+  font-size: 0.75rem;
 }
 
-.frame__github {
-  grid-area: github;
+.frame__teams {
+  grid-area: teams;
   justify-self: end;
+  font-size: 0.75rem;
+}
+
+.frame__tickets {
+  grid-area: tickets;
+  justify-self: end;
+  font-size: 0.75rem;
+}
+
+.frame__contact {
+  grid-area: contact;
+  justify-self: end;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .frame__credits {
@@ -94,14 +110,14 @@
     top: 0;
     left: 0;
     width: 100%;
-    grid-column-gap: 2rem;
-    grid-template-columns: 1fr auto auto auto;
+    grid-column-gap: 1.5rem;
+    grid-template-columns: 1fr auto auto auto auto auto;
     grid-template-rows: auto auto auto;
     align-content: space-between;
     grid-template-areas:
-      "... back github archive"
-      "title title title title"
-      "tags tags tags credits";
+      "... home timeline teams tickets contact"
+      "title title title title title title"
+      "tags tags tags tags tags credits";
   }
 
   .frame__titleContainer {
@@ -129,9 +145,12 @@
     align-self: end;
   }
 
-  .frame__back,
-  .frame__archive,
-  .frame__github {
+  .frame__home,
+  .frame__timeline,
+  .frame__teams,
+  .frame__tickets,
+  .frame__contact {
     justify-self: end;
+    font-size: 0.875rem;
   }
 }
