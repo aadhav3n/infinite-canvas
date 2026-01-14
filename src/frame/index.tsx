@@ -42,19 +42,21 @@ export function Frame() {
           {contactText}
         </a>
       </nav>
-      <nav className={styles.frame__tags}>
-        <a href="https://www.instagram.com/explore/tags/megamaalai/" target="_blank" rel="noopener noreferrer">
-          #megamaalai
-        </a>
-        <a href="https://www.instagram.com/explore/tags/mm26/" target="_blank" rel="noopener noreferrer">
-          #mm26
-        </a>
-        <a href="https://www.instagram.com/explore/tags/imperialtsoc/" target="_blank" rel="noopener noreferrer">
-          #imperialtsoc
-        </a>
-      </nav>
-      <div className={styles.frame__credits}>
-        <span>By inhouse :)</span>
+      <div className={styles.frame__bottom}>
+        <nav className={styles.frame__tags}>
+          <a href="https://www.instagram.com/explore/tags/megamaalai/" target="_blank" rel="noopener noreferrer">
+            #megamaalai
+          </a>
+          <a href="https://www.instagram.com/explore/tags/mm26/" target="_blank" rel="noopener noreferrer">
+            #mm26
+          </a>
+          <a href="https://www.instagram.com/explore/tags/imperialtsoc/" target="_blank" rel="noopener noreferrer">
+            #imperialtsoc
+          </a>
+        </nav>
+        <div className={styles.frame__credits}>
+          <span>By inhouse :)</span>
+        </div>
       </div>
     </header>
   );
