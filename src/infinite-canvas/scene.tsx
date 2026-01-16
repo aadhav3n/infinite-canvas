@@ -540,7 +540,13 @@ export function InfiniteCanvasScene({
           camera={{ position: [0, 0, INITIAL_CAMERA_Z], fov: cameraFov, near: cameraNear, far: cameraFar }}
           dpr={dpr}
           flat
-          gl={{ antialias: false, powerPreference: "high-performance" }}
+          gl={{ 
+            antialias: false, 
+            powerPreference: isTouchDevice ? "default" : "high-performance",
+            alpha: false,
+            preserveDrawingBuffer: false,
+            failIfMajorPerformanceCaveat: false
+          }}
           className={styles.canvas}
         >
           <color attach="background" args={[backgroundColor]} />
