@@ -16,7 +16,7 @@ _An infinite 3D canvas built with React Three Fiber for exploring and displaying
 - **Keyboard navigation** - WASD to move, QE for up/down
 - **Progressive loading** - Textures load on-demand with progress tracking n
 
-## Getting Started
+## Getting Startedh
 
 ```bash
 npm install
