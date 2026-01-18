@@ -4,6 +4,8 @@ import styles from "./style.module.css";
 export function Frame() {
   const [contactText, setContactText] = React.useState("CONTACT");
   const [isFading, setIsFading] = React.useState(false);
+  const [creditText, setCreditText] = React.useState("by aadhavan");
+  const [isCreditFading, setIsCreditFading] = React.useState(false);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -16,6 +18,26 @@ export function Frame() {
 
     return () => clearInterval(interval);
   }, []);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIsCreditFading(true);
+      setTimeout(() => {
+        setCreditText((prev) => (prev === "by aadhavan" ? "by aadhav3n" : "by aadhavan"));
+        setIsCreditFading(false);
+      }, 300);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCreditHover = () => {
+    setIsCreditFading(true);
+    setTimeout(() => {
+      setCreditText((prev) => (prev === "by aadhavan" ? "by aadhav3n" : "by aadhavan"));
+      setIsCreditFading(false);
+    }, 300);
+  };
 
   return (
     <header className={`frame ${styles.frame}`}>
@@ -54,8 +76,11 @@ export function Frame() {
             #imperialtsoc
           </a>
         </nav>
-        <div className={styles.frame__credits}>
-          <span>By inhouse :)</span>
+        <div 
+          className={styles.frame__credits}
+          onMouseEnter={handleCreditHover}
+        >
+          <span className={isCreditFading ? styles.fading : ""}>{creditText}</span>
         </div>
       </div>
     </header>
