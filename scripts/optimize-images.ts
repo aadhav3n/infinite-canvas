@@ -4,7 +4,7 @@ import sharp from "sharp";
 
 const ARTWORKS_DIR = "./public/artworks";
 const MANIFEST_PATH = "./public/artworks/manifest.json";
-const MAX_DIMENSION = 3000; // Max width or height
+const MAX_DIMENSION = 600; // Max width or height
 const JPEG_QUALITY = 85; // Good balance between quality and file size
 
 type ManifestItem = {
@@ -52,17 +52,8 @@ async function optimizeImage(filepath: string): Promise<{ width: number; height:
       }
     }
 
-    // Only process if dimensions need to change or if we want to recompress
+    // Always process to ensure all images meet the max dimension requirement
     const needsResize = newWidth !== width || newHeight !== height;
-    
-    if (!needsResize) {
-      // Even if dimensions are fine, we might want to recompress for better file size
-      // Check if file is already reasonably sized (less than 2MB)
-      if (originalSize < 2 * 1024 * 1024) {
-        console.log(`  Skipping (already optimized): ${path.basename(filepath)}`);
-        return { width, height, originalSize, newSize: originalSize };
-      }
-    }
 
     // Create a temporary file for the optimized image
     const tempPath = `${filepath}.tmp`;
