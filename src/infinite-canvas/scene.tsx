@@ -209,7 +209,7 @@ function Chunk({
     let canceled = false;
     const run = () => !canceled && setPlanes(generateChunkPlanesCached(cx, cy, cz));
 
-    if (typeof requestIdleCallback !== "undefined") {
+    if (typeof requestIdleCallback !== "undefined" && typeof cancelIdleCallback !== "undefined") {
       const id = requestIdleCallback(run, { timeout: 100 });
 
       return () => {

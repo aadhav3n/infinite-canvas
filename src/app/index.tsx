@@ -17,7 +17,13 @@ export function App() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch("/artworks/manifest.json");
+        // Use import.meta.env.BASE_URL for proper path resolution with Vite
+        // Files in public folder are always served from root, so we use absolute path
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const manifestPath = baseUrl === '/' 
+          ? '/artworks/manifest.json' 
+          : `${baseUrl}artworks/manifest.json`.replace(/\/+/g, '/');
+        const response = await fetch(manifestPath);
         
         if (!response.ok) {
           throw new Error(`Failed to load manifest: ${response.statusText}`);
