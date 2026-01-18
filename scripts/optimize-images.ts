@@ -5,7 +5,7 @@ import sharp from "sharp";
 const ARTWORKS_DIR = "./public/artworks";
 const MANIFEST_PATH = "./public/artworks/manifest.json";
 const MAX_DIMENSION = 600; // Max width or height
-const JPEG_QUALITY = 85; // Good balance between quality and file size
+const JPEG_QUALITY = 80; // Good balance between quality and file size
 
 type ManifestItem = {
   url: string;
