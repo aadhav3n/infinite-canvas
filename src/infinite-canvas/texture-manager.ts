@@ -51,7 +51,7 @@ const resizeImageForMobile = (image: HTMLImageElement, maxDimension: number): Pr
     const resizedImage = new Image();
     resizedImage.onload = () => resolve(resizedImage);
     resizedImage.onerror = () => resolve(image);
-    resizedImage.src = canvas.toDataURL("image/jpeg", 0.9);
+    resizedImage.src = canvas.toDataURL("image/jpeg", 0.95);
   });
 };
 
@@ -75,7 +75,7 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
   loadCallbacks.set(key, callbacks);
 
   const isMobile = getIsTouchDevice();
-  const maxDimension = isMobile ? 1080 : Infinity;
+  const maxDimension = isMobile ? 2048 : Infinity;
 
   // If mobile and image dimensions exceed max, we need to resize
   const needsResize = isMobile && item.width && item.height && (item.width > maxDimension || item.height > maxDimension);
@@ -96,7 +96,7 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
         texture.minFilter = THREE.LinearMipmapLinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.generateMipmaps = true;
-        texture.anisotropy = 4;
+        texture.anisotropy = 16;
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.needsUpdate = true;
 
