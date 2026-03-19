@@ -2,9 +2,9 @@ import * as React from "react";
 import styles from "./style.module.css";
 
 const COMMENTS = [
-  "Imperial Tamil Society was founded in 1996 by etc",
+  "Imperial Tamil Society was founded in 1992 by Kesh Tharma",
   "We have had over 1600 dancers participate in Mega Maalai and 12,000 attendees",
-  "Follow our Instagram @imperialtsoc for updates",
+  "Follow us on Instagram for the latest updates",
 ];
 
 export function PageLoader({ progress }: { progress: number }) {

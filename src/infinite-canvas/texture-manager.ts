@@ -75,7 +75,7 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
   loadCallbacks.set(key, callbacks);
 
   const isMobile = getIsTouchDevice();
-  const maxDimension = isMobile ? 2048 : Infinity;
+  const maxDimension = isMobile ? 2048 : Number.POSITIVE_INFINITY;
 
   // If mobile and image dimensions exceed max, we need to resize
   const needsResize = isMobile && item.width && item.height && (item.width > maxDimension || item.height > maxDimension);
@@ -167,34 +167,34 @@ export const getTexture = (item: MediaItem, onLoad?: (texture: THREE.Texture) =>
     img.src = key;
     
     return texture;
-  } else {
-    // Regular loading for desktop or images that don't need resizing
-    const texture = loader.load(
-      key,
-      (tex) => {
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.generateMipmaps = true;
-        tex.anisotropy = 4;
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.needsUpdate = true;
-
-        textureCache.set(key, tex);
-
-        loadCallbacks.get(key)?.forEach((cb) => {
-          try {
-            cb(tex);
-          } catch (err) {
-            console.error(`Callback failed: ${JSON.stringify(err)}`);
-          }
-        });
-        loadCallbacks.delete(key);
-      },
-      undefined,
-      (err) => console.error("Texture load failed:", key, err)
-    );
-
-    textureCache.set(key, texture);
-    return texture;
   }
+
+  // Regular loading for desktop or images that don't need resizing
+  const texture = loader.load(
+    key,
+    (tex) => {
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      tex.generateMipmaps = true;
+      tex.anisotropy = 4;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.needsUpdate = true;
+
+      textureCache.set(key, tex);
+
+      loadCallbacks.get(key)?.forEach((cb) => {
+        try {
+          cb(tex);
+        } catch (err) {
+          console.error(`Callback failed: ${JSON.stringify(err)}`);
+        }
+      });
+      loadCallbacks.delete(key);
+    },
+    undefined,
+    (err) => console.error("Texture load failed:", key, err)
+  );
+
+  textureCache.set(key, texture);
+  return texture;
 };

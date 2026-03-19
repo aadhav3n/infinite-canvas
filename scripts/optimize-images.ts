@@ -53,7 +53,6 @@ async function optimizeImage(filepath: string): Promise<{ width: number; height:
     }
 
     // Always process to ensure all images meet the max dimension requirement
-    const needsResize = newWidth !== width || newHeight !== height;
 
     // Create a temporary file for the optimized image
     const tempPath = `${filepath}.tmp`;

@@ -1,0 +1,45 @@
+.creditsCorner {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right, 1rem));
+  bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+  z-index: 10000;
+
+  pointer-events: auto;
+  color: #fff;
+  mix-blend-mode: difference;
+
+  font-family: "DM Sans", sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  text-decoration: none;
+  user-select: none;
+}
+
+.creditsCorner:hover {
+  opacity: 0.75;
+}
+
+.creditsCorner:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 3px;
+}
+
+.char {
+  display: inline-block;
+  animation: creditsCharPop 320ms ease-out;
+}
+
+@keyframes creditsCharPop {
+  from {
+    transform: translateY(2px) scale(0.96);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+

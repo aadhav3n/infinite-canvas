@@ -3,6 +3,7 @@ import { Frame } from "~/src/frame";
 import { InfiniteCanvas } from "~/src/infinite-canvas";
 import type { MediaItem } from "~/src/infinite-canvas/types";
 import { PageLoader } from "~/src/loader";
+import { CreditsCorner } from "~/src/credits";
 
 export function App() {
   const [media, setMedia] = React.useState<MediaItem[]>([]);
@@ -94,52 +95,69 @@ export function App() {
   }, []);
 
   if (isLoading) {
-    return <PageLoader progress={0} />;
+    return (
+      <>
+        <CreditsCorner />
+        <PageLoader progress={0} />
+      </>
+    );
   }
 
   if (error) {
     return (
-      <div style={{ 
-        display: "flex", 
-        justifyContent: "center", 
-        alignItems: "center", 
-        height: "100vh", 
-        width: "100vw",
-        color: "red",
-        padding: "2rem",
-        textAlign: "center",
-        backgroundColor: "#ffffff",
-        fontFamily: "ui-monospace, monospace"
-      }}>
-        <div>
-          <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem" }}>Loading Error</h2>
-          <p style={{ marginBottom: "1rem", fontSize: "1rem" }}>{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            style={{
-              padding: "0.75rem 1.5rem",
-              fontSize: "1rem",
-              backgroundColor: "#000",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              marginTop: "1rem"
-            }}
-          >
-            Refresh Page
-          </button>
+      <>
+        <CreditsCorner />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            width: "100vw",
+            color: "red",
+            padding: "2rem",
+            textAlign: "center",
+            backgroundColor: "#ffffff",
+            fontFamily: "ui-monospace, monospace",
+          }}
+        >
+          <div>
+            <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem" }}>Loading Error</h2>
+            <p style={{ marginBottom: "1rem", fontSize: "1rem" }}>{error}</p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              style={{
+                padding: "0.75rem 1.5rem",
+                fontSize: "1rem",
+                backgroundColor: "#000",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                marginTop: "1rem",
+              }}
+            >
+              Refresh Page
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!media.length) {
-    return <PageLoader progress={0} />;
+    return (
+      <>
+        <CreditsCorner />
+        <PageLoader progress={0} />
+      </>
+    );
   }
 
   return (
     <>
+      <CreditsCorner />
       <Frame />
       <PageLoader progress={textureProgress} />
       <InfiniteCanvas media={media} onTextureProgress={setTextureProgress} />

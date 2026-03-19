@@ -4,7 +4,6 @@ import styles from "./style.module.css";
 export function Frame() {
   const [contactText, setContactText] = React.useState("CONTACT");
   const [isFading, setIsFading] = React.useState(false);
-  const [creditText, setCreditText] = React.useState("by aadhavan");
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -17,18 +16,6 @@ export function Frame() {
 
     return () => clearInterval(interval);
   }, []);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCreditText((prev) => (prev === "by aadhavan" ? "by aadhav3n" : "by aadhavan"));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleCreditHover = () => {
-    setCreditText((prev) => (prev === "by aadhavan" ? "by aadhav3n" : "by aadhavan"));
-  };
 
   return (
     <header className={`frame ${styles.frame}`}>
@@ -67,12 +54,6 @@ export function Frame() {
             #imperialtsoc
           </a>
         </nav>
-        <div 
-          className={styles.frame__credits}
-          onMouseEnter={handleCreditHover}
-        >
-          <span>{creditText}</span>
-        </div>
       </div>
     </header>
   );
