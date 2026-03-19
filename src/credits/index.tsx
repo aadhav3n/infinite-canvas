@@ -25,11 +25,10 @@ export function CreditsCorner() {
       rel="noopener noreferrer"
       aria-label="Credits link to LinkedIn"
     >
-      CREDITS by aadhav
+      website by{" "}
       <span key={handleChar} className={styles.char}>
         {handleChar}
       </span>
-      n
     </a>
   );
 }
