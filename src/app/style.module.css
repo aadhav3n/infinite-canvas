@@ -1,66 +1,18 @@
-.ticketsPage {
-  min-height: 100svh;
+.errorContainer {
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: clamp(6rem, 12vh, 10rem) 1.5rem clamp(5rem, 10vh, 8rem);
-}
-
-.ticketsCard {
-  width: min(42rem, 100%);
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  height: 100vh;
+  font-family: sans-serif;
+  flex-direction: column;
   gap: 1rem;
-  pointer-events: auto;
 }
 
-.heading {
-  margin: 0;
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.95rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-align: center;
+.errorMessage {
+  color: red;
 }
 
-.ticketList {
-  width: 100%;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.ticketLink {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 999px;
-  padding: 0.9rem 1rem;
-  text-decoration: none;
-  color: #fff;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  mix-blend-mode: difference;
-  text-align: center;
-}
-
-.ticketLink:hover {
-  opacity: 0.75;
-  transform: translateY(-1px);
-}
-
-.eventName {
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.eventNote {
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.02em;
-  text-transform: none;
+.retryButton {
+  padding: 8px 16px;
+  cursor: pointer;
 }
