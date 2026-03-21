@@ -4,6 +4,19 @@ import styles from "./style.module.css";
 export function Frame() {
   const [contactText, setContactText] = React.useState("CONTACT");
   const [isFading, setIsFading] = React.useState(false);
+  const ticketsPageUrl = React.useMemo(() => {
+    let baseUrl = import.meta.env.BASE_URL || "/";
+
+    if (!baseUrl.startsWith("/")) {
+      baseUrl = `/${baseUrl}`;
+    }
+
+    if (!baseUrl.endsWith("/")) {
+      baseUrl = `${baseUrl}/`;
+    }
+
+    return `${baseUrl}tickets`;
+  }, []);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -32,7 +45,7 @@ export function Frame() {
         <a className={styles.frame__timeline} href="https://timeline.megamaalai.org">
           TIMELINE
         </a>
-        <a className={styles.frame__tickets} href="https://tickets.megamaalai.org">
+        <a className={styles.frame__tickets} href={ticketsPageUrl}>
           TICKETS
         </a>
         <a 

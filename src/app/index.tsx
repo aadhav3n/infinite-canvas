@@ -13,15 +13,18 @@ export function App() {
   const [error, setError] = React.useState<string | null>(null);
   const isTicketsSite =
     typeof window !== "undefined" && window.location.hostname === "tickets.megamaalai.org";
+  const isTicketsPath =
+    typeof window !== "undefined" && /\/tickets\/?$/.test(window.location.pathname);
+  const shouldShowTicketsPage = isTicketsSite || isTicketsPath;
 
   React.useEffect(() => {
-    if (isTicketsSite) {
+    if (shouldShowTicketsPage) {
       document.title = "mega maalai | tickets";
     }
-  }, [isTicketsSite]);
+  }, [shouldShowTicketsPage]);
  
   React.useEffect(() => {
-    if (isTicketsSite) {
+    if (shouldShowTicketsPage) {
       setIsLoading(false);
       return;
     }
@@ -106,9 +109,9 @@ export function App() {
       canceled = true;
       clearTimeout(timer);
     };
-  }, [isTicketsSite]);
+  }, [shouldShowTicketsPage]);
 
-  if (isTicketsSite) {
+  if (shouldShowTicketsPage) {
     return (
       <>
         <CreditsCorner />

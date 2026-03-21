@@ -20,7 +20,7 @@ const EVENTS: TicketEvent[] = [
     ticketUrl: "https://tickets.megamaalai.org/showdown",
   },
   {
-    name: "MM BRUNCH",
+    name: "MM BRUNCHTIME",
     ticketUrl: "https://tickets.megamaalai.org/brunchtime",
   },
 ];
