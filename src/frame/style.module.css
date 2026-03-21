@@ -65,7 +65,7 @@
 .frame__tickets,
 .frame__contact {
   justify-self: center;
-  font-size: 0.75rem;
+  font-size: 14px;
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -232,7 +232,7 @@
   .frame__timeline,
   .frame__tickets,
   .frame__contact {
-    font-size: 0.875rem;
+    font-size: 14px;
     white-space: nowrap;
   }
 }
