@@ -8,21 +8,20 @@ type TicketEvent = {
 
 const EVENTS: TicketEvent[] = [
   {
-    name: "MEGA MAALAI BALL",
-    ticketUrl: "https://tickets.megamaalai.org/ball",
+    name: "MM BALL",
+    ticketUrl: "https://tickets.megamaalai.org/mmball",
   },
   {
-    name: "MEGA MAALAI SHOWDAY",
+    name: "MM SHOWDAY",
     ticketUrl: "https://tickets.megamaalai.org/showday",
   },
   {
-    name: "MEGA MAALAI SHOWDOWN",
+    name: "MM SHOWDOWN",
     ticketUrl: "https://tickets.megamaalai.org/showdown",
   },
   {
-    name: "MEGA MAALAI BRUNCH?",
-    ticketUrl: "https://tickets.megamaalai.org/brunch",
-    note: "WILL BE HOSTED IF THERE IS ENOUGH SIGNUPS",
+    name: "MM BRUNCH",
+    ticketUrl: "https://tickets.megamaalai.org/brunchtime",
   },
 ];
 
