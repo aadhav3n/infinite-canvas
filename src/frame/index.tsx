@@ -20,7 +20,9 @@ export function Frame() {
   return (
     <header className={`frame ${styles.frame}`}>
       <div className={styles.frame__titleContainer}>
-        <h1 className={styles.frame__title}>MEGA MAALAI</h1>
+        <a className={styles.frame__titleLink} href="https://home.megamaalai.org">
+          <h1 className={styles.frame__title}>MEGA MAALAI</h1>
+        </a>
         <p className={styles.frame__subtitle}>32 years in the making</p>
       </div>
       <nav className={styles.frame__nav}>

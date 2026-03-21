@@ -41,6 +41,16 @@
   justify-content: center;
 }
 
+.frame__titleLink {
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.frame__titleLink:hover {
+  opacity: 0.7;
+  text-decoration: none;
+}
+
   .frame__title {
     font-family: "Asul", serif;
     font-size: 3.5rem;
