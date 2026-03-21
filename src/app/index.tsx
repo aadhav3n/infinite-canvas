@@ -15,7 +15,10 @@ export function App() {
     typeof window !== "undefined" && window.location.hostname === "tickets.megamaalai.org";
   const isTicketsPath =
     typeof window !== "undefined" && /\/tickets\/?$/.test(window.location.pathname);
-  const shouldShowTicketsPage = isTicketsSite || isTicketsPath;
+  const isTicketsQuery =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("page") === "tickets";
+  const shouldShowTicketsPage = isTicketsSite || isTicketsPath || isTicketsQuery;
 
   React.useEffect(() => {
     if (shouldShowTicketsPage) {
