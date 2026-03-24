@@ -49,7 +49,7 @@ export function Frame() {
       </nav>
       <div className={styles.frame__bottom}>
         <nav className={styles.frame__tags}>
-          <a href="https://imperialtsoc.org" target="_blank" rel="noopener noreferrer">
+          <a href="https://imperialtsoc.org">
             RETURN TO IMPERIALTSOC
           </a>
         </nav>
