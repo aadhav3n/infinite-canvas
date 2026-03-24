@@ -32,6 +32,9 @@ export function Frame() {
         <a className={styles.frame__timeline} href="https://timeline.megamaalai.org">
           TIMELINE
         </a>
+        <a className={styles.frame__acts} href="https://acts.megamaalai.org">
+          ACTS
+        </a>
         <a className={styles.frame__tickets} href="?page=tickets">
           TICKETS
         </a>
